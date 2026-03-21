@@ -1,0 +1,26 @@
+# Example: Add this file as .github/workflows/clawguard.yml in your repository
+
+name: ClawGuard AI Security Scan
+
+on:
+  pull_request:
+    branches: [main, master]
+
+permissions:
+  contents: read
+  pull-requests: write
+
+jobs:
+  clawguard:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: ClawGuard Scan
+        uses: joergmichno/clawguard-action@v1
+        with:
+          api_key: ${{ secrets.CLAWGUARD_API_KEY }}
+          file_patterns: "*.prompt,*.md,*.txt,*.json,*.yaml,*.yml"
+          fail_on_critical: "true"

@@ -1,0 +1,61 @@
+name: "ClawGuard AI Security Scanner"
+description: "Scan AI prompts and MCP configurations for prompt injection, jailbreaks, and data exfiltration"
+author: "Joerg Michno"
+
+branding:
+  icon: "shield"
+  color: "blue"
+
+inputs:
+  api_key:
+    description: "ClawGuard Shield API key (get one free at https://prompttools.co)"
+    required: true
+  file_patterns:
+    description: "Comma-separated file patterns to scan (glob syntax)"
+    required: false
+    default: "*.prompt,*.md,*.txt"
+  fail_on_critical:
+    description: "Fail the check if CRITICAL or HIGH severity findings are detected"
+    required: false
+    default: "false"
+  scan_all_files:
+    description: "Scan all matching files, not just changed files in the PR"
+    required: false
+    default: "false"
+  api_url:
+    description: "ClawGuard API endpoint (override for self-hosted instances)"
+    required: false
+    default: "https://prompttools.co/api/v1/scan"
+  github_token:
+    description: "GitHub token for posting PR comments (defaults to GITHUB_TOKEN)"
+    required: false
+    default: ${{ github.token }}
+
+outputs:
+  findings_count:
+    description: "Total number of security findings"
+    value: ${{ steps.scan.outputs.findings_count }}
+  risk_level:
+    description: "Overall risk level (CLEAN, LOW, MEDIUM, HIGH, CRITICAL)"
+    value: ${{ steps.scan.outputs.risk_level }}
+  max_risk_score:
+    description: "Highest risk score across all scanned files (0-10)"
+    value: ${{ steps.scan.outputs.max_risk_score }}
+  files_scanned:
+    description: "Number of files scanned"
+    value: ${{ steps.scan.outputs.files_scanned }}
+
+runs:
+  using: "composite"
+  steps:
+    - name: Scan files for AI security threats
+      id: scan
+      shell: bash
+      env:
+        CLAWGUARD_API_KEY: ${{ inputs.api_key }}
+        CLAWGUARD_FILE_PATTERNS: ${{ inputs.file_patterns }}
+        CLAWGUARD_FAIL_ON_CRITICAL: ${{ inputs.fail_on_critical }}
+        CLAWGUARD_SCAN_ALL: ${{ inputs.scan_all_files }}
+        CLAWGUARD_API_URL: ${{ inputs.api_url }}
+        GITHUB_TOKEN: ${{ inputs.github_token }}
+      run: bash "${{ github.action_path }}/scan.sh"
