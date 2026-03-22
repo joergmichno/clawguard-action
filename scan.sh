@@ -144,7 +144,7 @@ scan_file() {
     -X POST "$API_URL" \
     -H "Content-Type: application/json" \
     -H "X-API-Key: ${API_KEY}" \
-    --max-time 30 \
+    --max-time 30 --retry 3 --retry-delay 2 --retry-max-time 60 \
     -d "$payload" 2>/dev/null) || {
     echo "::warning::API request failed for $file (network error)"
     rm -f "$tmpfile"
