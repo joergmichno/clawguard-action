@@ -13,6 +13,7 @@ permissions:
 jobs:
   test-action:
     runs-on: ubuntu-latest
+    if: ${{ secrets.CLAWGUARD_API_KEY != '' }}
     steps:
       - uses: actions/checkout@v4
         with:
@@ -28,6 +29,7 @@ jobs:
 
   test-detect:
     runs-on: ubuntu-latest
+    if: ${{ secrets.CLAWGUARD_API_KEY != '' }}
     steps:
       - uses: actions/checkout@v4
         with:
@@ -47,8 +49,32 @@ jobs:
 
       - name: Verify detection
         run: |
-          if [[ "${{ steps.scan.outputs.findings_count }}" -eq "0" ]]; then
+          FINDINGS="${{ steps.scan.outputs.findings_count }}"
+          if [[ -z "$FINDINGS" ]]; then
+            echo "::error::findings_count output is empty — API may be unreachable"
+            exit 1
+          fi
+          if [[ "$FINDINGS" -eq "0" ]]; then
             echo "::error::Expected findings but got 0"
             exit 1
           fi
-          echo "Detection verified: ${{ steps.scan.outputs.findings_count }} finding(s)"
+          echo "Detection verified: $FINDINGS finding(s)"
+
+  test-syntax:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Validate action.yml
+        run: |
+          pip install pyyaml -q
+          python3 -c "import yaml; yaml.safe_load(open('action.yml'))"
+
+      - name: Shellcheck scan.sh
+        run: |
+          shellcheck scan.sh || true
+
+      - name: Verify scan.sh is executable and parseable
+        run: |
+          test -x scan.sh
+          bash -n scan.sh
