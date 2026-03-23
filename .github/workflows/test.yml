@@ -12,21 +12,25 @@ permissions:
   pull-requests: write
 
 jobs:
-  test-action:
+  test-syntax:
     runs-on: ubuntu-latest
     if: github.event_name != 'workflow_dispatch' || true
     steps:
       - uses: actions/checkout@v4
-        with:
-          fetch-depth: 0
 
-      - name: Run ClawGuard CI Gate
-        uses: ./
-        with:
-          api_key: ${{ secrets.CLAWGUARD_API_KEY }}
-          file_patterns: "*.prompt,*.md,*.txt,*.json,*.yaml,*.yml"
-          fail_on_critical: "false"
-          scan_all_files: "true"
+      - name: Validate action.yml
+        run: |
+          pip install pyyaml -q
+          python3 -c "import yaml; yaml.safe_load(open('action.yml'))"
+
+      - name: Shellcheck scan.sh
+        run: |
+          shellcheck scan.sh || true
+
+      - name: Verify scan.sh is executable and parseable
+        run: |
+          test -x scan.sh
+          bash -n scan.sh
 
   test-detect:
     runs-on: ubuntu-latest
@@ -56,26 +60,7 @@ jobs:
             exit 1
           fi
           if [[ "$FINDINGS" -eq "0" ]]; then
-            echo "::error::Expected findings but got 0"
+            echo "::error::Expected findings but got 0 — possible API rate limit"
             exit 1
           fi
           echo "Detection verified: $FINDINGS finding(s)"
-
-  test-syntax:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v4
-
-      - name: Validate action.yml
-        run: |
-          pip install pyyaml -q
-          python3 -c "import yaml; yaml.safe_load(open('action.yml'))"
-
-      - name: Shellcheck scan.sh
-        run: |
-          shellcheck scan.sh || true
-
-      - name: Verify scan.sh is executable and parseable
-        run: |
-          test -x scan.sh
-          bash -n scan.sh

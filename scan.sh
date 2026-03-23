@@ -128,8 +128,8 @@ scan_file() {
     return
   fi
 
-  # Read file content (limit to 50KB to stay within API limits)
-  content=$(head -c 51200 "$file")
+  # Read file content (limit to 5000 chars to stay within API limits)
+  content=$(head -c 5000 "$file")
 
   # Build JSON payload safely using jq
   local payload
@@ -153,6 +153,29 @@ scan_file() {
 
   response=$(cat "$tmpfile")
   rm -f "$tmpfile"
+
+  # Retry on 429 (rate limit) with exponential backoff
+  local retries=0
+  local max_retries=3
+  while [[ "$http_code" == "429" && "$retries" -lt "$max_retries" ]]; do
+    retries=$((retries + 1))
+    local wait_time=$((retries * 5))
+    echo "::notice::Rate limited on $file — retry $retries/$max_retries in ${wait_time}s"
+    sleep "$wait_time"
+    tmpfile=$(mktemp)
+    http_code=$(curl -s -o "$tmpfile" -w '%{http_code}' \
+      -X POST "$API_URL" \
+      -H "Content-Type: application/json" \
+      -H "X-API-Key: ${API_KEY}" \
+      --max-time 30 \
+      -d "$payload" 2>/dev/null) || {
+      echo "::warning::API request failed for $file on retry $retries (network error)"
+      rm -f "$tmpfile"
+      return
+    }
+    response=$(cat "$tmpfile")
+    rm -f "$tmpfile"
+  done
 
   if [[ "$http_code" != "200" ]]; then
     local error_msg
