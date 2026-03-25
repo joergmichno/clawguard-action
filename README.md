@@ -4,7 +4,7 @@
 
 A GitHub Action that scans AI prompt files, MCP configurations, and LLM-related content in pull requests for security vulnerabilities including prompt injection, jailbreaks, and data exfiltration attempts.
 
-Powered by [ClawGuard](https://github.com/joergmichno/clawguard) -- 200 detection patterns, 15 languages, F1 score 98.0%.
+Powered by [ClawGuard](https://github.com/joergmichno/clawguard) -- 245 detection patterns, 15 languages, F1 score 99.0%.
 
 ## Quick Start
 
