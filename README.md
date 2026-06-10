@@ -30,7 +30,7 @@ jobs:
           api_key: ${{ secrets.CLAWGUARD_API_KEY }}
 ```
 
-Get your free API key at [prompttools.co](https://prompttools.co).
+Get your free API key at [prompttools.co](https://prompttools.co). For higher volumes, see [Pro & Enterprise plans](https://prompttools.co/shield).
 
 ## What It Detects
 
@@ -43,7 +43,7 @@ Get your free API key at [prompttools.co](https://prompttools.co).
 | Social Engineering | Authority impersonation, urgency manipulation |
 | Obfuscation | Base64-encoded payloads, Unicode homoglyphs, ROT13 |
 
-Full coverage: [OWASP LLM Top 10](https://genai.owasp.org/) (100%) and [OWASP Agentic Security Top 10](https://genai.owasp.org/) (100%).
+Coverage: [OWASP LLM Top 10](https://genai.owasp.org/) and [OWASP Agentic Security Top 10](https://genai.owasp.org/) — category mapping per pattern.
 
 ## Inputs
 
