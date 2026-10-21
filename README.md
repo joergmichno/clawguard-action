@@ -1,3 +1,5 @@
+> ⚠️ **Nachfolger: [ModVet](https://github.com/joergmichno/modvet)** — pre-install security scanner for Claude Code mods. Deterministic, offline, no LLM (`pip install modvet`, v0.2.3). This repository is kept as historical reference.
+
 # ClawGuard AI Security Scanner
 
 [![Scanned by ClawGuard](https://img.shields.io/badge/scanned%20by-ClawGuard-blue?logo=data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIyNCIgaGVpZ2h0PSIyNCIgdmlld0JveD0iMCAwIDI0IDI0IiBmaWxsPSJub25lIiBzdHJva2U9IndoaXRlIiBzdHJva2Utd2lkdGg9IjIiPjxwYXRoIGQ9Ik0xMiAyMnMtOC00LjUtOC0xMS44QTQgNCAwIDAgMSA4IDJjMS43NCAwIDMuNDEuODEgNC41IDIuMDlDMTMuMDkgMi44MSAxNC43NiAyIDE2LjUgMmE0IDQgMCAwIDEgNCA4LjJjMCA3LjMtOCAxMS44LTggMTEuOHoiLz48L3N2Zz4=)](https://github.com/joergmichno/clawguard)
